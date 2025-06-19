@@ -1,6 +1,6 @@
 # SmolAgent for Multimodal Reasoning and Evaluation
 
-An autonomous agent powered by [`smolagents`](https://github.com/smol-ai/smolagents), designed to solve and submit answers to the GAIA Benchmark. This project evaluates agent reasoning, tool usage, and general intelligence through a structured challenge set.
+An autonomous agent powered by [`smolagents`](https://github.com/huggingface/smolagents), designed to solve and submit answers to the GAIA Benchmark. This project evaluates agent reasoning, tool usage, and general intelligence through a structured challenge set.
 
 ## 🌟 Overview
 
