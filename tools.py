@@ -1,9 +1,35 @@
-from smolagents import tool
+from smolagents import tool, Tool
 from smolagents import WebSearchTool, DuckDuckGoSearchTool, PythonInterpreterTool, FinalAnswerTool
 import cv2
+import wikipedia 
 
 # web search tool
 search_tool = DuckDuckGoSearchTool()
+
+#wiki search tool
+@tool
+def wiki_search(query: str) -> str:
+    """
+    Search Wikipedia to retrieve a concise summary about a topic, entity, or event.
+    Uses Wikipedia's summary API to fetch up to three sentences of relevant information.
+    Handles common errors like disambiguation pages or missing pages gracefully.
+    
+    Args:
+        query (str): The search term or topic to look up on Wikipedia.
+    
+    Returns:
+        str: A short summary paragraph describing the topic or an error message
+             if the topic is ambiguous, not found, or other errors occur.
+    """
+    try:
+        return wikipedia.summary(query, sentences=3)
+    except wikipedia.exceptions.DisambiguationError as e:
+        return f"Disambiguation error. Possible options include: {', '.join(e.options[:5])}"
+    except wikipedia.exceptions.PageError:
+        return f"Wikipedia page not found for '{query}'."
+    except Exception as e:
+        return f"Error while searching Wikipedia: {str(e)}"
+
 
 
 @tool
@@ -81,3 +107,31 @@ def file_format_handler(file_description: str, file_type: str = "") -> str:
             file_type = "attachment"
     
     return error_messages.get(file_type, "The required file is missing. Please provide the file to continue.")
+
+# Python interpreter tool
+python_interpreter_tool = PythonInterpreterTool()
+
+@tool
+def calc_square_integers(value: str, sig_digits: int = 3) -> int:
+    """
+    Convert a number or numeric string to an integer. If the input has decimals, round it to the specified number of significant digits and return as integer.
+    Use this tool whenever you need to return an integer result, especially for square roots or calculations that should be integers.
+    Args:
+        value (str): The input number or string to process.
+        sig_digits (int, optional): Number of significant digits to round to if the value has decimals. Defaults to 3.
+    Returns:
+        int: Rounded integer value.
+    """
+    try:
+        num = float(value)
+    except Exception:
+        raise ValueError(f"Cannot convert to number: {value}")
+    if num == int(num):
+        return int(num)
+    else:
+        from math import log10, floor
+        if num == 0:
+            return 0
+        digits = sig_digits - int(floor(log10(abs(num)))) - 1
+        rounded = round(num, digits)
+        return int(round(rounded))
